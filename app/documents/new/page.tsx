@@ -5,18 +5,21 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { createDocument } from "@/lib/storage";
+import { useStorage } from "@/lib/use-storage";
 
 export default function NewDocumentPage() {
   const router = useRouter();
+  const storage = useStorage();
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim() || !text.trim()) return;
 
-    const doc = createDocument(title.trim(), text.trim());
+    setSubmitting(true);
+    const doc = await storage.createDocument(title.trim(), text.trim());
     router.push(`/documents?id=${doc.id}`);
   }
 
@@ -63,8 +66,8 @@ export default function NewDocumentPage() {
           />
         </div>
 
-        <Button type="submit" disabled={!title.trim() || !text.trim()}>
-          Create Document
+        <Button type="submit" disabled={submitting || !title.trim() || !text.trim()}>
+          {submitting ? "Creating..." : "Create Document"}
         </Button>
       </form>
     </div>

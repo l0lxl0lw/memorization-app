@@ -3,21 +3,27 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { listDocuments } from "@/lib/storage";
+import { useAuth } from "@/components/auth-provider";
+import { useStorage } from "@/lib/use-storage";
 import { seedIfNeeded } from "@/lib/seed";
 import { DocumentSummary } from "@/lib/types";
 import { DocumentCard } from "@/components/document-card";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
+  const { loading: authLoading } = useAuth();
+  const storage = useStorage();
   const [documents, setDocuments] = useState<DocumentSummary[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    seedIfNeeded();
-    setDocuments(listDocuments());
-    setLoaded(true);
-  }, []);
+    if (authLoading) return;
+
+    storage.listDocuments().then((docs) => {
+      setDocuments(docs);
+      setLoaded(true);
+    });
+  }, [authLoading, storage]);
 
   if (!loaded) {
     return (

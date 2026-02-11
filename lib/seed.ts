@@ -1,12 +1,12 @@
-import { getDocument, createDocument } from "./storage";
+import { createDocument } from "./storage";
 
-interface SeedDocument {
+export interface SeedDocument {
   seedId: string;
   title: string;
   text: string;
 }
 
-const SEED_DOCUMENTS: SeedDocument[] = [
+export const SEED_DOCUMENTS: SeedDocument[] = [
   {
     seedId: "psalm-8-1-9-esv",
     title: "Psalm 8:1-9 (ESV)",

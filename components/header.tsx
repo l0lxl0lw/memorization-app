@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
+import { AuthButton } from "./auth-button";
 
 export function Header() {
   return (
@@ -9,6 +10,7 @@ export function Header() {
           <BookOpen className="h-5 w-5" />
           <span className="text-lg font-semibold">Memorize</span>
         </Link>
+        <AuthButton />
       </div>
     </header>
   );

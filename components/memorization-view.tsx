@@ -6,27 +6,33 @@ import Link from "next/link";
 import { ArrowLeft, RotateCcw, EyeOff, Trash2 } from "lucide-react";
 import { Document } from "@/lib/types";
 import { parseText, countWords } from "@/lib/parse-text";
-import { getDocument, updateDocument, deleteDocument } from "@/lib/storage";
+import { useAuth } from "@/components/auth-provider";
+import { useStorage } from "@/lib/use-storage";
 import { WordGrid } from "@/components/word-grid";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Button } from "@/components/ui/button";
 
 export function MemorizationView({ id }: { id: string }) {
   const router = useRouter();
+  const { loading: authLoading } = useAuth();
+  const storage = useStorage();
   const [doc, setDoc] = useState<Document | null>(null);
   const [blackedOut, setBlackedOut] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const data = getDocument(id);
-    if (!data) {
-      router.push("/");
-      return;
-    }
-    setDoc(data);
-    setBlackedOut(new Set(data.blackedOutWordIndices));
-    setLoading(false);
-  }, [id, router]);
+    if (authLoading) return;
+
+    storage.getDocument(id).then((data) => {
+      if (!data) {
+        router.push("/");
+        return;
+      }
+      setDoc(data);
+      setBlackedOut(new Set(data.blackedOutWordIndices));
+      setLoading(false);
+    });
+  }, [id, router, authLoading, storage]);
 
   const toggleWord = useCallback(
     (index: number) => {
@@ -37,31 +43,31 @@ export function MemorizationView({ id }: { id: string }) {
         } else {
           next.add(index);
         }
-        updateDocument(id, { toggleWordIndex: index });
+        storage.updateDocument(id, { blackedOutWordIndices: Array.from(next) });
         return next;
       });
     },
-    [id]
+    [id, storage]
   );
 
   const resetAll = useCallback(() => {
     setBlackedOut(new Set());
-    updateDocument(id, { blackedOutWordIndices: [] });
-  }, [id]);
+    storage.updateDocument(id, { blackedOutWordIndices: [] });
+  }, [id, storage]);
 
   const blackOutAll = useCallback(() => {
     if (!doc) return;
     const total = countWords(doc.text);
     const allIndices = Array.from({ length: total }, (_, i) => i);
     setBlackedOut(new Set(allIndices));
-    updateDocument(id, { blackedOutWordIndices: allIndices });
-  }, [id, doc]);
+    storage.updateDocument(id, { blackedOutWordIndices: allIndices });
+  }, [id, doc, storage]);
 
-  const handleDelete = useCallback(() => {
+  const handleDelete = useCallback(async () => {
     if (!confirm("Delete this document? This cannot be undone.")) return;
-    deleteDocument(id);
+    await storage.deleteDocument(id);
     router.push("/");
-  }, [id, router]);
+  }, [id, router, storage]);
 
   if (loading) {
     return (
