@@ -9,7 +9,7 @@ interface DocumentCardProps {
 export function DocumentCard({ document: doc }: DocumentCardProps) {
   return (
     <Link
-      href={`/documents/${doc.id}`}
+      href={`/documents?id=${doc.id}`}
       className="block rounded-xl border border-zinc-800 bg-zinc-900 p-5 transition-colors hover:border-zinc-600 hover:bg-zinc-800/80"
     >
       <h3 className="mb-3 text-lg font-semibold text-zinc-100 truncate">{doc.title}</h3>

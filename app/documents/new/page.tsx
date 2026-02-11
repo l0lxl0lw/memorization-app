@@ -5,30 +5,19 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { createDocument } from "@/lib/storage";
 
 export default function NewDocumentPage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim() || !text.trim()) return;
 
-    setSubmitting(true);
-    const res = await fetch("/api/documents", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: title.trim(), text: text.trim() }),
-    });
-
-    if (res.ok) {
-      const doc = await res.json();
-      router.push(`/documents/${doc.id}`);
-    } else {
-      setSubmitting(false);
-    }
+    const doc = createDocument(title.trim(), text.trim());
+    router.push(`/documents?id=${doc.id}`);
   }
 
   return (
@@ -74,8 +63,8 @@ export default function NewDocumentPage() {
           />
         </div>
 
-        <Button type="submit" disabled={submitting || !title.trim() || !text.trim()}>
-          {submitting ? "Creating..." : "Create Document"}
+        <Button type="submit" disabled={!title.trim() || !text.trim()}>
+          Create Document
         </Button>
       </form>
     </div>

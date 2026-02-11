@@ -1,13 +1,29 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { listDocuments } from "@/lib/documents";
+import { listDocuments } from "@/lib/storage";
+import { DocumentSummary } from "@/lib/types";
 import { DocumentCard } from "@/components/document-card";
 import { Button } from "@/components/ui/button";
 
-export const dynamic = "force-dynamic";
+export default function DashboardPage() {
+  const [documents, setDocuments] = useState<DocumentSummary[]>([]);
+  const [loaded, setLoaded] = useState(false);
 
-export default async function DashboardPage() {
-  const documents = await listDocuments();
+  useEffect(() => {
+    setDocuments(listDocuments());
+    setLoaded(true);
+  }, []);
+
+  if (!loaded) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <p className="text-zinc-400">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div>

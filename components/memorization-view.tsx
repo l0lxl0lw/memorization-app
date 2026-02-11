@@ -1,34 +1,31 @@
 "use client";
 
-import { useEffect, useState, useCallback, use } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, RotateCcw, EyeOff, Trash2 } from "lucide-react";
 import { Document } from "@/lib/types";
 import { parseText, countWords } from "@/lib/parse-text";
+import { getDocument, updateDocument, deleteDocument } from "@/lib/storage";
 import { WordGrid } from "@/components/word-grid";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Button } from "@/components/ui/button";
 
-export default function MemorizationPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export function MemorizationView({ id }: { id: string }) {
   const router = useRouter();
   const [doc, setDoc] = useState<Document | null>(null);
   const [blackedOut, setBlackedOut] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/documents/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Not found");
-        return res.json();
-      })
-      .then((data: Document) => {
-        setDoc(data);
-        setBlackedOut(new Set(data.blackedOutWordIndices));
-      })
-      .catch(() => router.push("/"))
-      .finally(() => setLoading(false));
+    const data = getDocument(id);
+    if (!data) {
+      router.push("/");
+      return;
+    }
+    setDoc(data);
+    setBlackedOut(new Set(data.blackedOutWordIndices));
+    setLoading(false);
   }, [id, router]);
 
   const toggleWord = useCallback(
@@ -40,12 +37,7 @@ export default function MemorizationPage({ params }: { params: Promise<{ id: str
         } else {
           next.add(index);
         }
-        // Persist in background
-        fetch(`/api/documents/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ toggleWordIndex: index }),
-        });
+        updateDocument(id, { toggleWordIndex: index });
         return next;
       });
     },
@@ -54,11 +46,7 @@ export default function MemorizationPage({ params }: { params: Promise<{ id: str
 
   const resetAll = useCallback(() => {
     setBlackedOut(new Set());
-    fetch(`/api/documents/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ blackedOutWordIndices: [] }),
-    });
+    updateDocument(id, { blackedOutWordIndices: [] });
   }, [id]);
 
   const blackOutAll = useCallback(() => {
@@ -66,16 +54,12 @@ export default function MemorizationPage({ params }: { params: Promise<{ id: str
     const total = countWords(doc.text);
     const allIndices = Array.from({ length: total }, (_, i) => i);
     setBlackedOut(new Set(allIndices));
-    fetch(`/api/documents/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ blackedOutWordIndices: allIndices }),
-    });
+    updateDocument(id, { blackedOutWordIndices: allIndices });
   }, [id, doc]);
 
-  const handleDelete = useCallback(async () => {
+  const handleDelete = useCallback(() => {
     if (!confirm("Delete this document? This cannot be undone.")) return;
-    await fetch(`/api/documents/${id}`, { method: "DELETE" });
+    deleteDocument(id);
     router.push("/");
   }, [id, router]);
 
