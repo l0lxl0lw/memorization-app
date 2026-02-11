@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { listDocuments } from "@/lib/storage";
+import { seedIfNeeded } from "@/lib/seed";
 import { DocumentSummary } from "@/lib/types";
 import { DocumentCard } from "@/components/document-card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ export default function DashboardPage() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    seedIfNeeded();
     setDocuments(listDocuments());
     setLoaded(true);
   }, []);
