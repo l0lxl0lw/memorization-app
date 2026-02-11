@@ -21,7 +21,7 @@ export function WordGrid({ tokens, blackedOutIndices, onToggleWord }: WordGridPr
           return (
             <Tag
               key={i}
-              className="font-bold text-zinc-300 mt-4 mb-1"
+              className="font-bold text-zinc-500 mt-4 mb-1"
               style={{ fontSize: `${1.5 - (token.level - 1) * 0.15}rem` }}
             >
               {token.text}
