@@ -72,6 +72,64 @@ to receive anything from the Lord.<br>
 Such a person is double-minded<br>
 and unstable in all they do.`,
   },
+  {
+    seedId: "romans-8-28-39-niv",
+    title: "Romans 8:28-39 (NIV)",
+    text: `#### Part 1: God's Purpose (v. 28-30)
+And we know that in all things<br>
+God works for the good<br>
+of those who love him,<br>
+who have been called according to his purpose.<br>
+For those God foreknew<br>
+he also predestined<br>
+to be conformed to the image of his Son,<br>
+that he might be the firstborn<br>
+among many brothers and sisters.<br>
+And those he predestined, he also called;<br>
+those he called, he also justified;<br>
+those he justified, he also glorified.
+
+#### Part 2: God Is for Us (v. 31-34)
+What, then, shall we say in response to these things?<br>
+If God is for us, who can be against us?<br>
+He who did not spare his own Son,<br>
+but gave him up for us all—<br>
+how will he not also, along with him,<br>
+graciously give us all things?<br>
+Who will bring any charge<br>
+against those whom God has chosen?<br>
+It is God who justifies.<br>
+Who then is the one who condemns?<br>
+No one.<br>
+Christ Jesus who died—<br>
+more than that, who was raised to life—<br>
+is at the right hand of God<br>
+and is also interceding for us.
+
+#### Part 3: Nothing Can Separate Us (v. 35-37)
+Who shall separate us from the love of Christ?<br>
+Shall trouble or hardship<br>
+or persecution or famine<br>
+or nakedness or danger or sword?<br>
+As it is written:<br>
+"For your sake we face death all day long;<br>
+we are considered as sheep to be slaughtered."<br>
+No, in all these things<br>
+we are more than conquerors<br>
+through him who loved us.
+
+#### Part 4: The Unbreakable Love (v. 38-39)
+For I am convinced<br>
+that neither death nor life,<br>
+neither angels nor demons,<br>
+neither the present nor the future,<br>
+nor any powers,<br>
+neither height nor depth,<br>
+nor anything else in all creation,<br>
+will be able to separate us<br>
+from the love of God<br>
+that is in Christ Jesus our Lord.`,
+  },
 ];
 
 const SEEDED_KEY = "memorize-seeded";
