@@ -60,6 +60,38 @@ I'm really excited for you<br>
 because you're going to look back on today<br>
 as the day everything changed.`,
   },
+  {
+    seedId: "james-1-2-8-niv",
+    title: "James 1:2-8 (NIV)",
+    text: `#### Part 1: Joy in Trials (v. 2-4)
+Consider it pure joy,<br>
+my brothers and sisters,<br>
+whenever you face trials of many kinds,<br>
+because you know<br>
+that the testing of your faith<br>
+produces perseverance.<br>
+Let perseverance finish its work<br>
+so that you may be mature and complete,<br>
+not lacking anything.
+
+#### Part 2: Ask for Wisdom (v. 5-6a)
+If any of you lacks wisdom,<br>
+you should ask God,<br>
+who gives generously to all<br>
+without finding fault,<br>
+and it will be given to you.<br>
+But when you ask,<br>
+you must believe and not doubt,
+
+#### Part 3: The Doubter (v. 6b-8)
+because the one who doubts<br>
+is like a wave of the sea,<br>
+blown and tossed by the wind.<br>
+That person should not expect<br>
+to receive anything from the Lord.<br>
+Such a person is double-minded<br>
+and unstable in all they do.`,
+  },
 ];
 
 const SEEDED_KEY = "memorize-seeded";
@@ -68,6 +100,20 @@ export function seedIfNeeded() {
   if (typeof window === "undefined") return;
 
   const seeded: string[] = JSON.parse(localStorage.getItem(SEEDED_KEY) || "[]");
+  const currentSeedIds = new Set(SEED_DOCUMENTS.map((s) => s.seedId));
+
+  // If old seeds were removed from the list, clear documents and re-seed
+  const hasStaleSeeds = seeded.some((id) => !currentSeedIds.has(id));
+  if (hasStaleSeeds) {
+    localStorage.removeItem("memorize-documents");
+    const freshSeeded: string[] = [];
+    for (const seed of SEED_DOCUMENTS) {
+      createDocument(seed.title, seed.text);
+      freshSeeded.push(seed.seedId);
+    }
+    localStorage.setItem(SEEDED_KEY, JSON.stringify(freshSeeded));
+    return;
+  }
 
   for (const seed of SEED_DOCUMENTS) {
     if (!seeded.includes(seed.seedId)) {
