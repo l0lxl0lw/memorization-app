@@ -31,7 +31,7 @@ export default function DashboardPage() {
   const storage = useStorage();
   const [documents, setDocuments] = useState<DocumentSummary[]>([]);
   const [loaded, setLoaded] = useState(false);
-  const [sort, setSort] = useState<SortOption>("date");
+  const [sort, setSort] = useState<SortOption>("progress");
 
   const sortedDocuments = useMemo(() => sortDocuments(documents, sort), [documents, sort]);
 
