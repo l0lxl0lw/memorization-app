@@ -10,7 +10,7 @@ export interface Storage {
   createDocument: (title: string, text: string) => Promise<Document>;
   updateDocument: (
     id: string,
-    update: { toggleWordIndex?: number; blackedOutWordIndices?: number[] }
+    update: { toggleWordIndex?: number; blackedOutWordIndices?: number[]; title?: string; text?: string }
   ) => Promise<Document | null>;
   deleteDocument: (id: string) => Promise<boolean>;
 }

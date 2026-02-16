@@ -57,11 +57,17 @@ export function createDocument(title: string, text: string): Document {
 
 export function updateDocument(
   id: string,
-  update: { toggleWordIndex?: number; blackedOutWordIndices?: number[] }
+  update: { toggleWordIndex?: number; blackedOutWordIndices?: number[]; title?: string; text?: string }
 ): Document | null {
   const docs = getAll();
   const doc = docs.find((d) => d.id === id);
   if (!doc) return null;
+
+  if (update.title !== undefined) doc.title = update.title;
+  if (update.text !== undefined) {
+    doc.text = update.text;
+    doc.blackedOutWordIndices = [];
+  }
 
   if (update.blackedOutWordIndices !== undefined) {
     doc.blackedOutWordIndices = update.blackedOutWordIndices;

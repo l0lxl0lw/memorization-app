@@ -73,29 +73,35 @@ export async function createDocument(
 
 export async function updateDocument(
   id: string,
-  update: { toggleWordIndex?: number; blackedOutWordIndices?: number[] }
+  update: { toggleWordIndex?: number; blackedOutWordIndices?: number[]; title?: string; text?: string }
 ): Promise<Document | null> {
-  let newIndices: number[];
+  const patch: Record<string, unknown> = {
+    updated_at: new Date().toISOString(),
+  };
+
+  if (update.title !== undefined) patch.title = update.title;
+  if (update.text !== undefined) {
+    patch.text = update.text;
+    patch.blacked_out_word_indices = [];
+  }
 
   if (update.blackedOutWordIndices !== undefined) {
-    newIndices = update.blackedOutWordIndices;
+    patch.blacked_out_word_indices = update.blackedOutWordIndices;
   } else if (update.toggleWordIndex !== undefined) {
     const doc = await getDocument(id);
     if (!doc) return null;
-    newIndices = [...doc.blackedOutWordIndices];
+    const newIndices = [...doc.blackedOutWordIndices];
     const pos = newIndices.indexOf(update.toggleWordIndex);
     if (pos === -1) newIndices.push(update.toggleWordIndex);
     else newIndices.splice(pos, 1);
-  } else {
-    return null;
+    patch.blacked_out_word_indices = newIndices;
   }
+
+  if (Object.keys(patch).length === 1) return null; // only updated_at, nothing to do
 
   const { data, error } = await supabase
     .from("documents")
-    .update({
-      blacked_out_word_indices: newIndices,
-      updated_at: new Date().toISOString(),
-    })
+    .update(patch)
     .eq("id", id)
     .select()
     .single();
